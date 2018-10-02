@@ -2,20 +2,32 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
-class BroadcastServiceProvider extends ServiceProvider
+class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * The policy mappings for the application.
      *
+     * @var array
+     */
+    protected $policies = [
+        'App\Model' => 'App\Policies\ModelPolicy',
+        \App\Models\User::class  => \App\Policies\UserPolicy::class,
+        \App\Models\Status::class  => \App\Policies\StatusPolicy::class,
+    ];
+
+    /**
+     * Register any application authentication / authorization services.
+     *
+     * @param  \Illuminate\Contracts\Auth\Access\Gate  $gate
      * @return void
      */
-    public function boot()
+    public function boot(GateContract $gate)
     {
-        Broadcast::routes();
+        $this->registerPolicies($gate);
 
-        require base_path('routes/channels.php');
+        //
     }
 }
